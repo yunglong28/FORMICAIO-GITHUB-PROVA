@@ -363,3 +363,11 @@ body {
 #sendButton:hover {
     background-color: #333;
 }
+
+.footer_text {
+    font-family: 'MxPlusCordataPPC400', monospace; /* Your custom font */
+    font-size: 12px;
+    position: fixed; 
+    bottom: 0; 
+    right: 10px; 
+}
