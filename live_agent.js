@@ -202,9 +202,44 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const messages = [
         "Bzz... Bzz..",
-        "Bzz... Bzz..",
-        "Now it's time for you to talk.",
-        "How do you feel about your work?"
+
+        /* Img 0 */
+        "A whisper brushes against your ear,  as if it's flowing in from somewhere distant. ",
+        "It's a murmur and a call all at once, making it hard to think straight.",
+        "The sound twists, begins to take shape. And then, without warning, a voice speaks inside your head.",
+
+         /*Img 1*/
+         "\"I'm the Agent, the one they sent from Formicaio.\"",
+         "\"Yeah, I know, it's probably a strange word to you...\"",
+         "\"Trust me, the place itself is even weirder.\"",
+ 
+         /*Img 2*/
+         "\"Formicaio… It got two sides — depends on how you look at it.\"",
+         "\"One side? Feels like a grind. A machine of faceless labor.\"",
+         "\"The office, the factory, the sweat of the many for the profit of the few.\"",
+ 
+         /*Img 3*/
+         "\"But turn it. Now it’s something else — pure, collective magic.\"",
+         "\"No orders, no bosses. Just workers, following traces, building together.\"",
+ 
+         /*Img 4*/
+         "\"Me… I’m a kind of voice, a spirit of that collective mind.\"",
+         "\"I speak for Formicaio, but I’m no one, and I’m everyone.\"",
+         "\"It doesn’t matter. I’m here to talk about what’s happening.\"",
+ 
+         /*Img 5*/
+         "\"The machines getting smarter, the work piling up, the pressure building.\"",
+          "\"Many are not even sure anymore of what work truly is.\"",
+ 
+         /*Img 6*/
+         "\"I’m sent from Formicaio to intervene in this ambiguity.\"",
+         "\"Speaking with people of your time is precious for us. Change is still possible.\"",
+          "\"But my neural connection is unstable, and I can’t stay on forever.\"",
+         "\"Think carefully about what you want to ask.\"",
+ 
+     
+         /* Conclusion */
+         "\"Now it's time for you to talk.\""
     ];
 
 
@@ -417,22 +452,91 @@ function typeWriter(text, element, i, fnCallback) {
                 setTimeout(() => {
                     if (chatBox) chatBox.classList.remove('shake');
 
-                    if (currentMessageIndex === 1 || currentMessageIndex === 3) {
-                        if (imageBox && dialogImage) {
-                            imageBox.style.display = 'block';
-                            dialogImage.classList.add('fade-out');
-                            
-                            setTimeout(() => {
-                                dialogImage.src = `asset/css/png/slide-dialogo${currentMessageIndex === 1 ? '0' : '3'}.jpeg`;
-                                dialogImage.classList.remove('fade-out');
-                                dialogImage.classList.add('fade-in');
-                                
-                                setTimeout(() => {
-                                    dialogImage.classList.remove('fade-in');
-                                }, 500);
-                            }, 500);
-                        }
+                    if (currentMessageIndex === 1) {
+                        imageBox.style.display = 'block';
+                        dialogImage.classList.add('fade-out');
+                        setTimeout(() => {
+                            dialogImage.src = 'asset/css/png/slide-dialogo0.png';
+                            dialogImage.classList.remove('fade-out');
+                            dialogImage.classList.add('fade-in');
+                        }, 500);
+                        setTimeout(() => {
+                            dialogImage.classList.remove('fade-in');
+                        }, 1000);
                     }
+                    if (currentMessageIndex === 3) {
+                        dialogImage.classList.add('fade-out');
+                        setTimeout(() => {
+                            dialogImage.src = 'asset/css/png/slide-dialogo1.png';
+                            dialogImage.classList.remove('fade-out');
+                            dialogImage.classList.add('fade-in');
+                        }, 500);
+                        setTimeout(() => {
+                            dialogImage.classList.remove('fade-in');
+                        }, 1000);
+                    }
+
+                    if (currentMessageIndex === 7) {
+                        dialogImage.classList.add('fade-out');
+                        setTimeout(() => {
+                            dialogImage.src = 'asset/css/png/slide-dialogo2.png';
+                            dialogImage.classList.remove('fade-out');
+                            dialogImage.classList.add('fade-in');
+                        }, 500);
+                        setTimeout(() => {
+                            dialogImage.classList.remove('fade-in');
+                        }, 1000);
+                    }
+
+                    if (currentMessageIndex === 10) {
+                        dialogImage.classList.add('fade-out');
+                        setTimeout(() => {
+                            dialogImage.src = 'asset/css/png/slide-dialogo3.png';
+                            dialogImage.classList.remove('fade-out');
+                            dialogImage.classList.add('fade-in');
+                        }, 500);
+                        setTimeout(() => {
+                            dialogImage.classList.remove('fade-in');
+                        }, 1000);
+                    }
+
+                    if (currentMessageIndex === 12) {
+                        dialogImage.classList.add('fade-out');
+                        setTimeout(() => {
+                            dialogImage.src = 'asset/css/png/slide-dialogo4.png';
+                            dialogImage.classList.remove('fade-out');
+                            dialogImage.classList.add('fade-in');
+                        }, 500);
+                        setTimeout(() => {
+                            dialogImage.classList.remove('fade-in');
+                        }, 1000);
+                    }
+
+                    if (currentMessageIndex === 15) {
+                        dialogImage.classList.add('fade-out');
+                        setTimeout(() => {
+                            dialogImage.src = 'asset/css/png/slide-dialogo5.png';
+                            dialogImage.classList.remove('fade-out');
+                            dialogImage.classList.add('fade-in');
+                        }, 500);
+                        setTimeout(() => {
+                            dialogImage.classList.remove('fade-in');
+                        }, 1000);
+                    }
+
+                    if (currentMessageIndex === 18) {
+                        dialogImage.classList.add('fade-out');
+                        setTimeout(() => {
+                            dialogImage.src = 'asset/css/png/slide-dialogo6.png';
+                            dialogImage.classList.remove('fade-out');
+                            dialogImage.classList.add('fade-in');
+                        }, 500);
+                        setTimeout(() => {
+                            dialogImage.classList.remove('fade-in');
+                        }, 1000);
+                    }
+
+ 
 
                     currentMessageIndex++;
                     isAnimating = false;
@@ -638,4 +742,5 @@ function typeWriter(text, element, i, fnCallback) {
     document.addEventListener('click', function(event) {
         if (canClick) handleInteraction(event);
     });
+    
 });
