@@ -442,19 +442,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 setTimeout(() => {
                     if (chatBox) chatBox.classList.remove('shake');
 
-                    if (currentMessageIndex === 1) {
-                        imageBox.style.display = 'block';
-                        dialogImage.classList.add('fade-out');
-                        setTimeout(() => {
-                            dialogImage.src = 'asset/css/png/slide-dialogo0.png';
-                            dialogImage.classList.remove('fade-out');
-                            dialogImage.classList.add('fade-in');
-                        }, 500);
-                        setTimeout(() => {
-                            dialogImage.classList.remove('fade-in');
-                        }, 1000);
-                    }
-
+                 
                     if (currentMessageIndex === 1) {
                         imageBox.style.display = 'block';
                         dialogImage.classList.add('fade-out');
