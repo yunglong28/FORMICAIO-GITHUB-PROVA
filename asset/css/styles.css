@@ -96,7 +96,7 @@ body {
     scrollbar-width: thin;
     scrollbar-color: #90D64B #8F292B;
     font-family: 'MxPlusCordataPPC400', monospace;
-    font-size: 29px;
+    font-size: clamp(16px, 3vw, 29px); /* Adjusted font size */
     font-weight: 400;
     line-height: 1.6;
     color: #9dd3a1;
@@ -104,6 +104,8 @@ body {
                  1px 1px 2px #000000,
                  1px 1px 2px #000000;
     animation: flicker 30s alternate;
+    padding-left: clamp(10px, 1vw, 20px); /* Added left padding */
+    padding-right: clamp(10px, 1vw, 20px); /* Added right padding */
 }
 
 .chat-box-inner::-webkit-scrollbar {
@@ -134,7 +136,7 @@ body {
 .chat-box p {
     font-family: 'MxPlusCordataPPC400', monospace;
     margin: 0 0 15px 0;
-    font-size: 29px;
+    font-size: clamp(16px, 3vw, 29px); /* Match inner font size */    
     font-weight: 400;
     line-height: 1.6;
     white-space: normal;
@@ -144,6 +146,7 @@ body {
                  1px 1px 2px #000000,
                  1px 1px 2px #000000;
     animation: flicker 30s alternate;
+    padding: 0 clamp(5px, 1vw, 10px); /* Added padding */
 }
 
 .image-box {
