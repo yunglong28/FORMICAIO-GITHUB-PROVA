@@ -21,12 +21,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const closeBtn = document.querySelector('.close-btn');
     const skipButton = document.getElementById('skipButton');
 
+    // For Responsiveness
+    function setVH() {
+        let vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    window.addEventListener('load', setVH);
+    window.addEventListener('resize', setVH);
+
     // Central image creation
     const centralImage = document.createElement('img');
     centralImage.src = 'asset/css/png/formiche-fighe.svg';
     centralImage.className = 'formiche-dodge';
     document.body.appendChild(centralImage);
 
+    // Audio setup
     const menuAudio = new Audio('asset/css/kinked_menu_fancy.mp3');
     const gameAudio = new Audio('asset/css/kinked_game_(FANCY).mp3');
     let currentAudio = menuAudio;
@@ -35,8 +45,147 @@ document.addEventListener('DOMContentLoaded', function () {
     menuAudio.loop = true;
     gameAudio.loop = true;
 
+    // Optimized Particle System Implementation
+    class ParticleSystem {
+        constructor(canvas, options = {}) {
+            this.canvas = canvas;
+            this.ctx = canvas.getContext('2d', { alpha: false });
+            this.ctx.imageSmoothingEnabled = false;
+            
+            this.options = {
+                particleCount: options.particleCount || 20,
+                particleSize: options.particleSize || 2,
+                connectionDistance: options.connectionDistance || 15,
+                speed: options.speed || 0.2,
+                colors: options.colors || ['#90D64B', '#52fc3b', '#8F292B']
+            };
+            
+            this.particles = new Float32Array(this.options.particleCount * 4);
+            this.particleColors = new Array(this.options.particleCount);
+            this.frameCount = 0;
+            
+            this.resize();
+            this.init();
+        }
 
-    //Transition Overlay
+        init() {
+            for (let i = 0; i < this.options.particleCount; i++) {
+                const baseIndex = i * 4;
+                this.particles[baseIndex] = Math.random() * this.canvas.width;
+                this.particles[baseIndex + 1] = Math.random() * this.canvas.height;
+                this.particles[baseIndex + 2] = (Math.random() > 0.5 ? 1 : -1) * this.options.speed;
+                this.particles[baseIndex + 3] = (Math.random() > 0.5 ? 1 : -1) * this.options.speed;
+                this.particleColors[i] = this.options.colors[Math.floor(Math.random() * this.options.colors.length)];
+            }
+        }
+
+        resize() {
+            this.canvas.width = window.innerWidth / 4;
+            this.canvas.height = window.innerHeight / 4;
+            this.canvas.style.width = `${window.innerWidth}px`;
+            this.canvas.style.height = `${window.innerHeight}px`;
+        }
+
+        update() {
+            const connDist = this.options.connectionDistance;
+            const connDistSq = connDist * connDist;
+
+            for (let i = 0; i < this.options.particleCount; i++) {
+                const baseIndex = i * 4;
+                this.particles[baseIndex] += this.particles[baseIndex + 2];
+                this.particles[baseIndex + 1] += this.particles[baseIndex + 3];
+                
+                if (this.particles[baseIndex] < 0) this.particles[baseIndex] = this.canvas.width;
+                else if (this.particles[baseIndex] > this.canvas.width) this.particles[baseIndex] = 0;
+                
+                if (this.particles[baseIndex + 1] < 0) this.particles[baseIndex + 1] = this.canvas.height;
+                else if (this.particles[baseIndex + 1] > this.canvas.height) this.particles[baseIndex + 1] = 0;
+            }
+
+            this.ctx.fillStyle = '#000000';
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+            for (let i = 0; i < this.options.particleCount; i++) {
+                const baseIndex = i * 4;
+                const x1 = this.particles[baseIndex];
+                const y1 = this.particles[baseIndex + 1];
+
+                if (this.frameCount % 30 !== i % 30) {
+                    this.ctx.fillStyle = this.particleColors[i];
+                    this.ctx.fillRect(
+                        Math.floor(x1),
+                        Math.floor(y1),
+                        this.options.particleSize,
+                        this.options.particleSize
+                    );
+                }
+
+                for (let j = i + 1; j < this.options.particleCount; j++) {
+                    const baseIndex2 = j * 4;
+                    const dx = x1 - this.particles[baseIndex2];
+                    const dy = y1 - this.particles[baseIndex2 + 1];
+                    const distSq = dx * dx + dy * dy;
+
+                    if (distSq < connDistSq) {
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(Math.floor(x1), Math.floor(y1));
+                        this.ctx.lineTo(
+                            Math.floor(this.particles[baseIndex2]),
+                            Math.floor(this.particles[baseIndex2 + 1])
+                        );
+                        this.ctx.strokeStyle = `${this.particleColors[i]}22`;
+                        this.ctx.stroke();
+                    }
+                }
+            }
+
+            if (this.frameCount % 2 === 0) {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                for (let i = 0; i < this.canvas.height; i += 8) {
+                    this.ctx.fillRect(0, i, this.canvas.width, 1);
+                }
+            }
+
+            this.frameCount++;
+        }
+
+        animate() {
+            this.update();
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+
+    // Initialize particle system
+    const canvas = document.createElement('canvas');
+    canvas.id = 'particleCanvas';
+    canvas.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+        opacity: 0.2;
+        image-rendering: pixelated;
+    `;
+    document.body.insertBefore(canvas, document.body.firstChild);
+
+    const particleSystem = new ParticleSystem(canvas, {
+        particleCount: 20,
+        particleSize: 2,
+        connectionDistance: 15,
+        speed: 0.2,
+        colors: ['#90D64B', '#52fc3b', '#8F292B']
+    });
+
+    particleSystem.animate();
+
+    window.addEventListener('resize', () => {
+        particleSystem.resize();
+    });
+
+    // Transition Overlay
     function createTransitionOverlay() {
         const overlay = document.createElement('div');
         overlay.className = 'transition-overlay';
@@ -49,142 +198,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const loading = document.createElement('div');
         loading.className = 'loading-state';
         loading.innerHTML = `
-        <div class="loading-container">
-            <div class="loading-bar"></div>
-            <div class="loading-text">ESTABLISHING NEURAL CONNECTION</div>
-        </div>
-    `;
+            <div class="loading-container">
+                <div class="loading-bar"></div>
+                <div class="loading-text">ESTABLISHING NEURAL CONNECTION</div>
+            </div>
+        `;
         document.body.appendChild(loading);
         return loading;
     }
-
-
-
-    // Particles Effects
-    const canvas = document.createElement('canvas');
-    canvas.id = 'particleCanvas';
-    canvas.style.cssText = `
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 1;
-        opacity: 0.2;  // Reduced opacity
-        image-rendering: pixelated;
-    `;
-    document.body.insertBefore(canvas, document.body.firstChild);
-    
-    const ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
-    const particles = [];
-    let mouseX = 0;
-    let mouseY = 0;
-    
-    // Simplified color palette
-    const retroColors = [
-        '#90D64B',  // Main green
-        '#52fc3b',   // Bright green
-        '#8F292B'
-    ];
-    
-    function resizeCanvas() {
-        canvas.width = window.innerWidth / 4;
-        canvas.height = window.innerHeight / 4;
-        canvas.style.width = `${window.innerWidth}px`;
-        canvas.style.height = `${window.innerHeight}px`;
-    }
-    
-    function createParticles() {
-        particles.length = 0;
-        // Reduced number of particles
-        for(let i = 0; i < 20; i++) {
-            particles.push({
-                x: Math.floor(Math.random() * canvas.width),
-                y: Math.floor(Math.random() * canvas.height),
-                size: 2, // Fixed smaller size
-                speedX: (Math.random() > 0.5 ? 0.2 : -0.2), // Slower movement
-                speedY: (Math.random() > 0.5 ? 0.2 : -0.2), // Slower movement
-                color: retroColors[Math.floor(Math.random() * retroColors.length)],
-                blinkRate: 0.02 // Reduced blink rate
-            });
-        }
-    }
-    
-    function drawPixelatedSquare(x, y, size, color) {
-        ctx.fillStyle = color;
-        x = Math.floor(x);
-        y = Math.floor(y);
-        ctx.fillRect(x, y, size, size);
-    }
-    
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        particles.forEach(p => {
-            // Slower movement
-            p.x += p.speedX;
-            p.y += p.speedY;
-            
-            // Screen wrap
-            if(p.x < 0) p.x = canvas.width;
-            if(p.x > canvas.width) p.x = 0;
-            if(p.y < 0) p.y = canvas.height;
-            if(p.y > canvas.height) p.y = 0;
-            
-            // Only draw if not blinking
-            if(Math.random() > p.blinkRate) {
-                drawPixelatedSquare(p.x, p.y, p.size, p.color);
-            }
-            
-            // Simplified connections - fewer and more subtle
-            particles.forEach(p2 => {
-                const dx = p.x - p2.x;
-                const dy = p.y - p2.y;
-                const dist = Math.sqrt(dx * dx + dy * dy);
-                
-                if(dist < 15) { // Reduced connection distance
-                    ctx.beginPath();
-                    ctx.moveTo(Math.floor(p.x), Math.floor(p.y));
-                    ctx.lineTo(Math.floor(p2.x), Math.floor(p2.y));
-                    ctx.strokeStyle = `${p.color}22`; // More transparent connections
-                    ctx.lineWidth = 1;
-                    ctx.stroke();
-                }
-            });
-        });
-        
-        // Subtle scanline effect
-        for(let i = 0; i < canvas.height; i += 8) { // Increased spacing
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; // More transparent
-            ctx.fillRect(0, i, canvas.width, 1);
-        }
-        
-        requestAnimationFrame(animate);
-    }
-    
-    // Initialize
-    resizeCanvas();
-    createParticles();
-    animate();
-    
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        resizeCanvas();
-        createParticles();
-    });
-    
-    // Minimal mouse interaction
-    window.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX / 4;
-        mouseY = e.clientY / 4;
-    });
-
-
-
-
-    
 
     if (volumeSlider) {
         const initialVolume = 0.5;
@@ -202,73 +223,52 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const messages = [
         "Bzz... Bzz..",
-
-        /* Img 0 */
         "A whisper brushes against your ear,  as if it's flowing in from somewhere distant. ",
         "It's a murmur and a call all at once, making it hard to think straight.",
         "The sound twists, begins to take shape. And then, without warning, a voice speaks inside your head.",
-
-         /*Img 1*/
-         "\"I'm the Agent, the one they sent from Formicaio.\"",
-         "\"Yeah, I know, it's probably a strange word to you...\"",
-         "\"Trust me, the place itself is even weirder.\"",
- 
-         /*Img 2*/
-         "\"Formicaio… It got two sides — depends on how you look at it.\"",
-         "\"One side? Feels like a grind. A machine of faceless labor.\"",
-         "\"The office, the factory, the sweat of the many for the profit of the few.\"",
- 
-         /*Img 3*/
-         "\"But turn it. Now it’s something else — pure, collective magic.\"",
-         "\"No orders, no bosses. Just workers, following traces, building together.\"",
- 
-         /*Img 4*/
-         "\"Me… I’m a kind of voice, a spirit of that collective mind.\"",
-         "\"I speak for Formicaio, but I’m no one, and I’m everyone.\"",
-         "\"It doesn’t matter. I’m here to talk about what’s happening.\"",
- 
-         /*Img 5*/
-         "\"The machines getting smarter, the work piling up, the pressure building.\"",
-          "\"Many are not even sure anymore of what work truly is.\"",
- 
-         /*Img 6*/
-         "\"I’m sent from Formicaio to intervene in this ambiguity.\"",
-         "\"Speaking with people of your time is precious for us. Change is still possible.\"",
-          "\"But my neural connection is unstable, and I can’t stay on forever.\"",
-         "\"Think carefully about what you want to ask.\"",
- 
-     
-         /* Conclusion */
-         "\"Now it's time for you to talk.\""
+        "\"I'm the Agent, the one they sent from Formicaio.\"",
+        "\"Yeah, I know, it's probably a strange word to you...\"",
+        "\"Trust me, the place itself is even weirder.\"",
+        "\"Formicaio… It got two sides — depends on how you look at it.\"",
+        "\"One side? Feels like a grind. A machine of faceless labor.\"",
+        "\"The office, the factory, the sweat of the many for the profit of the few.\"",
+        "\"But turn it. Now it's something else — pure, collective magic.\"",
+        "\"No orders, no bosses. Just workers, following traces, building together.\"",
+        "\"Me… I'm a kind of voice, a spirit of that collective mind.\"",
+        "\"I speak for Formicaio, but I'm no one, and I'm everyone.\"",
+        "\"It doesn't matter. I'm here to talk about what's happening.\"",
+        "\"The machines getting smarter, the work piling up, the pressure building.\"",
+        "\"Many are not even sure anymore of what work truly is.\"",
+        "\"I'm sent from Formicaio to intervene in this ambiguity.\"",
+        "\"Speaking with people of your time is precious for us. Change is still possible.\"",
+        "\"But my neural connection is unstable, and I can't stay on forever.\"",
+        "\"Think carefully about what you want to ask.\"",
+        "\"Now it's time for you to talk.\""
     ];
 
+    function toggleAudio() {
+        if (!currentAudio) return;
 
-
-// Modify toggleAudio function
-function toggleAudio() {
-    if (!currentAudio) return;
-
-    if (isPlaying) {
-        currentAudio.pause();
-        soundButton.classList.remove('playing');
-        soundButton.textContent = 'Sound Off';
-    } else {
-        // Always use gameAudio if we're past the landing page
-        if (!landingPage || landingPage.style.display === 'none') {
-            currentAudio = gameAudio;
+        if (isPlaying) {
+            currentAudio.pause();
+            soundButton.classList.remove('playing');
+            soundButton.textContent = 'Sound Off';
+        } else {
+            if (!landingPage || landingPage.style.display === 'none') {
+                currentAudio = gameAudio;
+            }
+            
+            currentAudio.play().catch(e => {
+                console.error('Playback failed:', e);
+                setTimeout(() => {
+                    currentAudio.play().catch(e => console.error('Retry failed:', e));
+                }, 100);
+            });
+            soundButton.classList.add('playing');
+            soundButton.textContent = 'Sound On';
         }
-        
-        currentAudio.play().catch(e => {
-            console.error('Playback failed:', e);
-            setTimeout(() => {
-                currentAudio.play().catch(e => console.error('Retry failed:', e));
-            }, 100);
-        });
-        soundButton.classList.add('playing');
-        soundButton.textContent = 'Sound On';
+        isPlaying = !isPlaying;
     }
-    isPlaying = !isPlaying;
-}
 
     function switchAudio(newAudio) {
         if (!newAudio || newAudio === currentAudio) return;
@@ -303,57 +303,49 @@ function toggleAudio() {
         }, 50);
     }
 
-  // First, import GSAP in your HTML
-// <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    function handleDialogueTransition(messageElement, text) {
+        const tl = gsap.timeline();
+        
+        tl.from(messageElement, {
+            opacity: 0,
+            duration: 0.5,
+            ease: "power2.inOut"
+        });
+        
+        const chars = text.split("");
+        let currentText = "";
+        
+        chars.forEach((char, index) => {
+            tl.add(() => {
+                currentText += char;
+                messageElement.innerHTML = currentText + '<span class="cursor-blink">|</span>';
+            }, index * 0.05);
+        });
+        
+        tl.to(messageElement, {
+            keyframes: [
+                { x: -2 },
+                { x: 2 },
+                { x: -2 },
+                { x: 0 }
+            ],
+            duration: 0.3,
+            ease: "none"
+        });
+        
+        return tl;
+    }
 
-function handleDialogueTransition(messageElement, text) {
-    // Create timeline for sequence
-    const tl = gsap.timeline();
-    
-    // Fade in message with typewriter effect
-    tl.from(messageElement, {
-        opacity: 0,
-        duration: 0.5,
-        ease: "power2.inOut"
-    });
-    
-    // Split text into characters for typewriter
-    const chars = text.split("");
-    let currentText = "";
-    
-    chars.forEach((char, index) => {
-        tl.add(() => {
-            currentText += char;
-            messageElement.innerHTML = currentText + '<span class="cursor-blink">|</span>';
-        }, index * 0.05);
-    });
-    
-    // Add final shake effect
-    tl.to(messageElement, {
-        keyframes: [
-            { x: -2 },
-            { x: 2 },
-            { x: -2 },
-            { x: 0 }
-        ],
-        duration: 0.3,
-        ease: "none"
-    });
-    
-    return tl;
-}
-
-// Replace the typeWriter function with this:
-function typeWriter(text, element, i, fnCallback) {
-    const messageElement = document.createElement('div');
-    element.appendChild(messageElement);
-    
-    handleDialogueTransition(messageElement, text).then(() => {
-        if (typeof fnCallback === 'function') {
-            setTimeout(fnCallback, 500);
-        }
-    });
-}
+    function typeWriter(text, element, i, fnCallback) {
+        const messageElement = document.createElement('div');
+        element.appendChild(messageElement);
+        
+        handleDialogueTransition(messageElement, text).then(() => {
+            if (typeof fnCallback === 'function') {
+                setTimeout(fnCallback, 500);
+            }
+        });
+    }
 
     function fadeTransition(callback) {
         if (!chatBoxInner) return;
@@ -428,8 +420,6 @@ function typeWriter(text, element, i, fnCallback) {
         sendButton.addEventListener('click', processInput);
     }
     
-    
-    
     function handleInteraction(event) {
         if (isAnimating || currentMessageIndex >= messages.length) return;
         if (event.target.closest('#userInputBox')) return;
@@ -464,10 +454,20 @@ function typeWriter(text, element, i, fnCallback) {
                             dialogImage.classList.remove('fade-in');
                         }, 1000);
                     }
-                    if (currentMessageIndex === 3) {
+
+                    const dialogueImages = {
+                        3: 'slide-dialogo1.png',
+                        7: 'slide-dialogo2.png',
+                        10: 'slide-dialogo3.png',
+                        12: 'slide-dialogo4.png',
+                        15: 'slide-dialogo5.png',
+                        18: 'slide-dialogo6.png'
+                    };
+
+                    if (dialogueImages[currentMessageIndex]) {
                         dialogImage.classList.add('fade-out');
                         setTimeout(() => {
-                            dialogImage.src = 'asset/css/png/slide-dialogo1.png';
+                            dialogImage.src = `asset/css/png/${dialogueImages[currentMessageIndex]}`;
                             dialogImage.classList.remove('fade-out');
                             dialogImage.classList.add('fade-in');
                         }, 500);
@@ -475,68 +475,6 @@ function typeWriter(text, element, i, fnCallback) {
                             dialogImage.classList.remove('fade-in');
                         }, 1000);
                     }
-
-                    if (currentMessageIndex === 7) {
-                        dialogImage.classList.add('fade-out');
-                        setTimeout(() => {
-                            dialogImage.src = 'asset/css/png/slide-dialogo2.png';
-                            dialogImage.classList.remove('fade-out');
-                            dialogImage.classList.add('fade-in');
-                        }, 500);
-                        setTimeout(() => {
-                            dialogImage.classList.remove('fade-in');
-                        }, 1000);
-                    }
-
-                    if (currentMessageIndex === 10) {
-                        dialogImage.classList.add('fade-out');
-                        setTimeout(() => {
-                            dialogImage.src = 'asset/css/png/slide-dialogo3.png';
-                            dialogImage.classList.remove('fade-out');
-                            dialogImage.classList.add('fade-in');
-                        }, 500);
-                        setTimeout(() => {
-                            dialogImage.classList.remove('fade-in');
-                        }, 1000);
-                    }
-
-                    if (currentMessageIndex === 12) {
-                        dialogImage.classList.add('fade-out');
-                        setTimeout(() => {
-                            dialogImage.src = 'asset/css/png/slide-dialogo4.png';
-                            dialogImage.classList.remove('fade-out');
-                            dialogImage.classList.add('fade-in');
-                        }, 500);
-                        setTimeout(() => {
-                            dialogImage.classList.remove('fade-in');
-                        }, 1000);
-                    }
-
-                    if (currentMessageIndex === 15) {
-                        dialogImage.classList.add('fade-out');
-                        setTimeout(() => {
-                            dialogImage.src = 'asset/css/png/slide-dialogo5.png';
-                            dialogImage.classList.remove('fade-out');
-                            dialogImage.classList.add('fade-in');
-                        }, 500);
-                        setTimeout(() => {
-                            dialogImage.classList.remove('fade-in');
-                        }, 1000);
-                    }
-
-                    if (currentMessageIndex === 18) {
-                        dialogImage.classList.add('fade-out');
-                        setTimeout(() => {
-                            dialogImage.src = 'asset/css/png/slide-dialogo6.png';
-                            dialogImage.classList.remove('fade-out');
-                            dialogImage.classList.add('fade-in');
-                        }, 500);
-                        setTimeout(() => {
-                            dialogImage.classList.remove('fade-in');
-                        }, 1000);
-                    }
-
- 
 
                     currentMessageIndex++;
                     isAnimating = false;
@@ -638,37 +576,35 @@ function typeWriter(text, element, i, fnCallback) {
         }
     }
 
-   function handleStartClick() {
-    const transitionOverlay = createTransitionOverlay();
-    transitionOverlay.classList.add('active');
-
-    setTimeout(() => {
-        landingPage.style.display = 'none';
-        if (footer) {
-            footer.style.display = 'none';
-        }
-        chatbotSection.style.display = 'block';
-        currentAudio = gameAudio;
-        
-        resizeCanvas();
-        createParticles();
-        
-        if (fadeOverlay) {
-            fadeOverlay.style.background = 'none';
-            fadeOverlay.style.backgroundColor = 'transparent';
-        }
+    function handleStartClick() {
+        const transitionOverlay = createTransitionOverlay();
+        transitionOverlay.classList.add('active');
 
         setTimeout(() => {
-            transitionOverlay.classList.remove('active');
-            setTimeout(() => transitionOverlay.remove(), 500);
-            
-            if (currentMessageIndex === 0) {
-                handleInteraction({ target: document.body });
+            landingPage.style.display = 'none';
+            if (footer) {
+                footer.style.display = 'none';
             }
-        }, 100);
-    }, 500);
-}
+            chatbotSection.style.display = 'block';
+            currentAudio = gameAudio;
+            
+            if (fadeOverlay) {
+                fadeOverlay.style.background = 'none';
+                fadeOverlay.style.backgroundColor = 'transparent';
+            }
 
+            setTimeout(() => {
+                transitionOverlay.classList.remove('active');
+                setTimeout(() => transitionOverlay.remove(), 500);
+                
+                if (currentMessageIndex === 0) {
+                    handleInteraction({ target: document.body });
+                }
+            }, 100);
+        }, 500);
+    }
+
+    // Event Listeners
     if (soundButton) {
         soundButton.addEventListener('click', toggleAudio);
     }
@@ -742,5 +678,4 @@ function typeWriter(text, element, i, fnCallback) {
     document.addEventListener('click', function(event) {
         if (canClick) handleInteraction(event);
     });
-    
 });
