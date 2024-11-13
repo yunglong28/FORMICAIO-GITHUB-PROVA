@@ -74,7 +74,6 @@ body {
 .chat-box {
     position: relative;
     width: 110%;
-    height: 60vh;
     max-height: calc(100vh - 200px); /* Subtract space for input and margins */
     padding: 24px;
     background-color: #8F292B;
