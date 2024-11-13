@@ -96,7 +96,7 @@ body {
 .chat-box-inner {
     height: 100%;
     max-height: calc(50vh - 48px);
-    overflow-y: scroll !important; /* Changed from auto */
+    overflow-y: auto !important; /* Changed from auto */
     overflow-x: hidden;
     padding-right: 20px;
     margin-right: -20px;
