@@ -94,12 +94,10 @@ body {
 .chat-box-inner {
     height: 100%;
     max-height: calc(50vh - 48px);
-    overflow-y: auto;
+    overflow-y: scroll; /* Changed from auto */
     overflow-x: hidden;
     padding-right: 20px;
     margin-right: -20px;
-    scrollbar-width: thin;
-    scrollbar-color: #90D64B #8F292B;
     font-family: 'MxPlusCordataPPC400', monospace;
     font-size: 29px;
     font-weight: 400;
@@ -109,11 +107,17 @@ body {
                  1px 1px 2px #000000,
                  1px 1px 2px #000000;
     animation: flicker 30s alternate;
+    
+    /* Firefox scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: #90D64B #8F292B;
 }
 
+/* Webkit scrollbar - keep these styles directly after chat-box-inner */
 .chat-box-inner::-webkit-scrollbar {
     width: 12px;
     background: transparent;
+    display: block; /* Force display */
 }
 
 .chat-box-inner::-webkit-scrollbar-track {
@@ -129,6 +133,7 @@ body {
     border: 1px solid #000;
     border-radius: 10px;
     box-shadow: 0 0 6px #90D64B;
+    min-height: 40px; /* Minimum thumb size */
 }
 
 .chat-box-inner::-webkit-scrollbar-thumb:hover {
