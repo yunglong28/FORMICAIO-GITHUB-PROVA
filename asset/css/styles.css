@@ -74,6 +74,7 @@ body {
 .chat-box {
     position: relative;
     width: 110%;
+    height: 60vh;
     max-height: calc(100vh - 200px); /* Subtract space for input and margins */
     padding: 24px;
     background-color: #8F292B;
@@ -91,10 +92,12 @@ body {
     overflow: hidden;
     align-self: center;
 }
+
+
 .chat-box-inner {
     height: 100%;
     max-height: calc(50vh - 48px);
-    overflow-y: scroll; /* Changed from auto */
+    overflow-y: scroll !important; /* Changed from auto */
     overflow-x: hidden;
     padding-right: 20px;
     margin-right: -20px;
