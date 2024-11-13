@@ -341,6 +341,7 @@ document.addEventListener('DOMContentLoaded', function () {
         element.appendChild(messageElement);
         
         handleDialogueTransition(messageElement, text).then(() => {
+            scrollChatToBottom(); // Add scroll here
             if (typeof fnCallback === 'function') {
                 setTimeout(fnCallback, 500);
             }
@@ -624,10 +625,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function scrollChatToBottom() {
-        if (chatBox) {
-            chatBox.scrollTop = chatBox.scrollHeight;
+        if (chatBoxInner) {
+            chatBoxInner.scrollTop = chatBoxInner.scrollHeight;
         }
     }
+    
 
     function handleStartClick() {
         const transitionOverlay = createTransitionOverlay();
