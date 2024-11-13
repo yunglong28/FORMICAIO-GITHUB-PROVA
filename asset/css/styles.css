@@ -62,6 +62,7 @@ body {
     flex-direction: column;
     align-items: center;
     overflow-y: auto;
+    overflow-x: hidden !important;
     scrollbar-width: thin;
     scrollbar-color: #90D64B #8F292B;
     -webkit-overflow-scrolling: touch;
