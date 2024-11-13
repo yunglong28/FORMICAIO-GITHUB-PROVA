@@ -47,24 +47,49 @@ body {
 .container {
     text-align: center;
     position: relative;
-    width: 96%;
-    max-width: 720px;
-    height: 100vh; /* Full viewport height */
+    width: clamp(280px, 96%, 720px);
+    margin: 0 auto;
+    padding: clamp(12px, 2vw, 24px);
+    height: auto;
+    min-height: 60vh;
+    max-height: 100vh;
     background-color: transparent;
     border-radius: 15px;
-    padding: 24px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0);
     border: 0px solid #8F292B;
     z-index: 10;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between; /* Distribute space between elements */
-    overflow-y: auto; /* Enable vertical scrolling if needed */
-    box-sizing: border-box;
-    margin: 0 auto;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #90D64B #8F292B;
+    -webkit-overflow-scrolling: touch;
 }
 
+.container::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+}
+
+.container::-webkit-scrollbar-track {
+    background: #8F292B;
+    border: 1px solid #000;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: #90D64B;
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: 0 0 6px #90D64B;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+    background: #ACC66A;
+    box-shadow: 0 0 8px #90D64B;
+}
 
 
 .container:hover {
@@ -73,33 +98,33 @@ body {
 
 .chat-box {
     position: relative;
-    width: 110%;
-    max-height: calc(100vh - 200px); /* Subtract space for input and margins */
-    padding: 24px;
+    width: clamp(260px, 100%, 700px);
+    padding: clamp(16px, 2vw, 24px);
     background-color: #8F292B;
     border-radius: 18px;
     box-shadow: inset 0 0 12px #8F292B !important;
     border: 0.1rem solid #000;
     filter: drop-shadow(0.3rem 0.3rem 0.4rem rgba(0, 0, 0, 0.15));
-    font-size: 24px;
+    font-size: clamp(18px, 2vw, 24px);
     line-height: 1.6;
-    margin-bottom: 24px;
+    margin-bottom: clamp(8px, 2vh, 24px);
     box-sizing: border-box;
     text-align: left;
     transition: opacity 1s ease-in-out;
     opacity: 1;
-    overflow: hidden;
+    max-height: clamp(200px, 50vh, 600px);
     align-self: center;
 }
-
 
 .chat-box-inner {
     height: 100%;
     max-height: calc(50vh - 48px);
-    overflow-y: auto !important; /* Changed from auto */
+    overflow-y: auto;
     overflow-x: hidden;
     padding-right: 20px;
     margin-right: -20px;
+    scrollbar-width: thin;
+    scrollbar-color: #90D64B #8F292B;
     font-family: 'MxPlusCordataPPC400', monospace;
     font-size: 29px;
     font-weight: 400;
@@ -109,17 +134,11 @@ body {
                  1px 1px 2px #000000,
                  1px 1px 2px #000000;
     animation: flicker 30s alternate;
-    
-    /* Firefox scrollbar */
-    scrollbar-width: thin;
-    scrollbar-color: #90D64B #8F292B;
 }
 
-/* Webkit scrollbar - keep these styles directly after chat-box-inner */
 .chat-box-inner::-webkit-scrollbar {
     width: 12px;
     background: transparent;
-    display: block; /* Force display */
 }
 
 .chat-box-inner::-webkit-scrollbar-track {
@@ -135,7 +154,6 @@ body {
     border: 1px solid #000;
     border-radius: 10px;
     box-shadow: 0 0 6px #90D64B;
-    min-height: 40px; /* Minimum thumb size */
 }
 
 .chat-box-inner::-webkit-scrollbar-thumb:hover {
@@ -180,10 +198,15 @@ body {
 
 .image-box img {
     max-width: 100%;
+    max-height: 60vh;
+    height: auto;
+    width: auto;
+    object-fit: contain;
     border-radius: 12px;
     border: 0.1rem solid #000;
     filter: drop-shadow(0.3rem 0.3rem 0.4rem rgba(0, 0, 0, 0.15));
 }
+
 
 .transition-overlay-image {
     position: fixed;
@@ -282,11 +305,6 @@ body {
     line-height: 1.44;
     width: clamp(260px, 100%, 665px) !important;
     align-self: center;
-    position: sticky;
-    bottom: 24px;
-    width: 120%;
-    max-width: 720px;
-    z-index: 100;
 }
 
 #userInputField {
@@ -546,5 +564,25 @@ body {
     
     #userInputBox {
         font-size: clamp(14px, 3vw, 18px);
+    }
+}
+
+
+
+@media screen and (max-height: 600px) {
+    .container {
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+    
+    .chat-box {
+        max-height: 70vh;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .container {
+        padding: 8px;
+        width: 100%;
     }
 }
