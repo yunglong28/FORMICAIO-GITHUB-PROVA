@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preload" href="WebPlus_Cordata_PPC-400.woff" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="asset/css/png/formicaio_logo.png" as="image">
+    <link rel="preload" href="asset/css/png/ant_left.png" as="image">
+    <link rel="preload" href="asset/css/png/ant_right.png" as="image">
     <title>FORMICAIO ALPHA VERSION</title>
     <!-- Autoplaying audio muted initially -->
     <audio id="backgroundAudio" autoplay loop muted>
@@ -16,16 +19,6 @@
     <link rel="icon" href="asset/css/png/LOGO_favicon.svg" type="image/png">
 </head>
 <body>
-    <canvas id="particleCanvas" style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 1;
-        opacity: 0.5;
-    "></canvas>
     <!-- Landing Page Section -->
     <div class="landing-container" id="landingPage">
         <img src="asset/css/png/formicaio_logo.png" alt="Formicaio Logo" class="formicaio-logo">
@@ -35,6 +28,7 @@
         <div class="buttons">
             <button id="startChatBtn" class="start-btn">Start</button>
             <button id="tutorialBtn" class="tutorial-btn">Tutorial</button>
+            <a href="https://files.cargocollective.com/c1076387/FORMICAIO-MANUAL-FINAL.pdf" target="_blank" class="manual-btn">Read User's Manual</a>
         </div>
         <img src="asset/css/png/ant_left.png" alt="Ant Left" class="ant ant-left">
         <img src="asset/css/png/ant_right.png" alt="Ant Right" class="ant ant-right">
@@ -118,35 +112,33 @@
 
     <!-- JavaScript to toggle between sections -->
     <script>
-        const startChatBtn = document.getElementById('startChatBtn');
-        const landingPage = document.getElementById('landingPage');
-        const chatbotSection = document.getElementById('chatbotSection');
-        
-        startChatBtn.addEventListener('click', function() {
-            landingPage.style.display = 'none';
-            chatbotSection.style.display = 'block';
+        // Cache all DOM elements at once
+        const elements = {
+            startChatBtn: document.getElementById('startChatBtn'),
+            landingPage: document.getElementById('landingPage'),
+            chatbotSection: document.getElementById('chatbotSection'),
+            tutorialBtn: document.getElementById('tutorialBtn'),
+            tutorialPanel: document.getElementById('tutorialPanel'),
+            overlay: document.getElementById('overlay'),
+            closeBtn: document.querySelector('.close-btn'),
+            soundButton: document.getElementById('soundButton'),
+            volumeSlider: document.getElementById('volumeSlider')
+        };
+
+        // Use more efficient event listeners with the cached elements
+        const toggleTutorial = (show) => {
+            elements.tutorialPanel.style.display = show ? 'block' : 'none';
+            elements.overlay.style.display = show ? 'block' : 'none';
+        };
+
+        elements.startChatBtn.addEventListener('click', () => {
+            elements.landingPage.style.display = 'none';
+            elements.chatbotSection.style.display = 'block';
         });
 
-        // Tutorial panel functionality
-        const tutorialBtn = document.getElementById('tutorialBtn');
-        const tutorialPanel = document.getElementById('tutorialPanel');
-        const overlay = document.getElementById('overlay');
-        const closeBtn = document.querySelector('.close-btn');
-
-        tutorialBtn.addEventListener('click', function() {
-            tutorialPanel.style.display = 'block';
-            overlay.style.display = 'block';
-        });
-
-        closeBtn.addEventListener('click', function() {
-            tutorialPanel.style.display = 'none';
-            overlay.style.display = 'none';
-        });
-
-        overlay.addEventListener('click', function() {
-            tutorialPanel.style.display = 'none';
-            overlay.style.display = 'none';
-        });
+        elements.tutorialBtn.addEventListener('click', () => toggleTutorial(true));
+        elements.closeBtn.addEventListener('click', () => toggleTutorial(false));
+        elements.overlay.addEventListener('click', () => toggleTutorial(false));
     </script>
 
     <!-- Include the chatbot script -->

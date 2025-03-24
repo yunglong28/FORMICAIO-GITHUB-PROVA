@@ -10,12 +10,20 @@
     document.addEventListener('DOMContentLoaded', function() {
         const audio = document.getElementById('backgroundAudio');
         let hasStartedPlaying = false;
+        let interactionListenersAdded = false;
 
         function forcePlay() {
-            audio.play();
-            document.removeEventListener('click', forcePlay);
-            document.removeEventListener('touchstart', forcePlay);
-            document.removeEventListener('keydown', forcePlay);
+            audio.play().catch(console.error);
+            removeInteractionListeners();
+        }
+
+        function removeInteractionListeners() {
+            if (interactionListenersAdded) {
+                document.removeEventListener('click', forcePlay);
+                document.removeEventListener('touchstart', forcePlay);
+                document.removeEventListener('keydown', forcePlay);
+                interactionListenersAdded = false;
+            }
         }
 
         function attemptPlay() {
@@ -23,28 +31,26 @@
                 audio.play()
                     .then(() => {
                         hasStartedPlaying = true;
-                        console.log('Audio started playing');
+                        removeInteractionListeners();
                     })
                     .catch(error => {
                         console.log('Auto-play failed:', error);
-                        // Add event listeners for user interaction
-                        document.addEventListener('click', forcePlay);
-                        document.addEventListener('touchstart', forcePlay);
-                        document.addEventListener('keydown', forcePlay);
+                        if (!interactionListenersAdded) {
+                            document.addEventListener('click', forcePlay);
+                            document.addEventListener('touchstart', forcePlay);
+                            document.addEventListener('keydown', forcePlay);
+                            interactionListenersAdded = true;
+                        }
                     });
             }
         }
 
-        // Try to play immediately
         attemptPlay();
-
-        // Try again after a short delay
         setTimeout(attemptPlay, 1000);
 
-        // Ensure looping
-        audio.addEventListener('ended', function() {
-            this.currentTime = 0;
-            this.play();
+        audio.addEventListener('ended', () => {
+            audio.currentTime = 0;
+            audio.play().catch(console.error);
         }, false);
     });
     </script>

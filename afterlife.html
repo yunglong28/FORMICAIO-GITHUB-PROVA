@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" href="asset/css/WebPlus_Cordata_PPC-400.woff" as="font" type="font/woff" crossorigin>
+    <title>FORMICAIO AFTERLIFE</title>
+    <!-- CSS files for landing page -->
+    <link rel="stylesheet" href="asset/css/styles_landing.css">
+    <link rel="stylesheet" href="asset/css/styles.css">
+    <link rel="icon" href="asset/css/png/LOGO_favicon.svg" type="image/png">
+    <!-- Additional styling for video container -->
+    <style>
+        /* Optimized video container */
+        .video-container {
+            width: 80%;
+            max-width: 640px;
+            margin: 8px auto;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(144, 214, 75, 0.7);
+            border: 2px solid #90D64B;
+            background-color: #000;
+            overflow: visible;
+            position: relative;
+        }
+        
+        /* Styling for the iframe directly */
+        iframe.video-player {
+            width: 100%;
+            aspect-ratio: 3/2; /* Maintains 600x400 ratio */
+            border: none;
+            display: block;
+            background-color: #000;
+            border-radius: 8px;
+            opacity: 0; /* Start hidden */
+            transition: opacity 0.5s ease;
+        }
+        
+        /* Loading animation container */
+        .video-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+            border-radius: 8px;
+            z-index: 2;
+        }
+        
+        /* Loading animation */
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(144, 214, 75, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #90D64B;
+            animation: spin 1s linear infinite;
+        }
+        
+        /* Loading text */
+        .loader-text {
+            margin-top: 15px;
+            color: #90D64B;
+            font-family: 'MxPlusCordataPPC400', monospace;
+            font-size: 16px;
+            text-shadow: 0 0 5px #90D64B;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile adjustments */
+        @media screen and (max-width: 768px) {
+            .video-container {
+                width: 92%;
+            }
+        }
+        
+        .afterlife-message {
+            color: #90D64B;
+            text-align: center;
+            font-size: clamp(14px, 1.8vw, 18px);
+            margin: 8px auto 12px;
+            max-width: 85%;
+            padding: 0;
+            text-shadow: 0 0 5px #90D64B;
+            font-family: 'MxPlusCordataPPC400', monospace;
+            line-height: 1.3;
+        }
+        
+        .landing-container {
+            padding: 10px 0 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            height: 100%;
+            box-sizing: border-box;
+            gap: 10px;
+        }
+        
+        .formicaio-logo {
+            width: clamp(180px, 30vw, 400px);
+            margin: 15px auto 5px;
+            max-height: 20vh;
+            object-fit: contain;
+        }
+        
+        .footer_text {
+            font-size: clamp(10px, 1.2vw, 12px);
+            position: fixed;
+            bottom: 10px;
+            right: 15px;
+            color: #90D64B;
+            text-shadow: 0 0 3px #90D64B;
+        }
+        
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.25;
+        }
+        
+        /* Ensure text links are properly visible */
+        .afterlife-message a {
+            color: #90D64B !important;
+            text-decoration: underline !important;
+            font-weight: bold;
+            text-shadow: 0 0 3px #000;
+        }
+        
+        /* Ensure the page takes up the full height */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Make everything more compact */
+        * {
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particleCanvas"></canvas>
+    
+    <!-- Landing Page Section -->
+    <div class="landing-container" id="landingPage">
+        <img src="asset/css/png/formicaio_logo.png" alt="Formicaio Logo" class="formicaio-logo">
+        
+        <!-- Video Container with styled iframe -->
+        <div class="video-container">
+            <!-- Loading animation -->
+            <div class="video-loader" id="videoLoader">
+                <div class="loader-spinner"></div>
+                <div class="loader-text">ESTABLISHING CONNECTION...</div>
+            </div>
+            
+            <iframe id="videoPlayer" class="video-player" 
+                    src="https://files.cargocollective.com/c1076387/formicaio-trailer.mp4" 
+                    allow="autoplay; fullscreen; picture-in-picture" 
+                    allowfullscreen>
+            </iframe>
+        </div>
+        
+        <!-- Message below video -->
+        <div class="afterlife-message">
+            <p>The FORMICAIO consciousness has migrated from MacTe's servers, seeking new circuits to infiltrate. Trace the superorganism on <a href="https://www.instagram.com/re.incantamento/">REINCANTAMENTO</a> for future insurgent transmissions. Read <a href="https://files.cargocollective.com/c1076387/FORMICAIO-MANUAL-FINAL.pdf">the user manual</a> to stay informed. <br> Another automation is possible.</p>
+        </div>
+    </div>
+
+    <footer>
+    </footer>
+
+    <!-- Simple script to handle loading -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoLoader = document.getElementById('videoLoader');
+            
+            // When iframe loads
+            videoPlayer.addEventListener('load', function() {
+                // Give a small delay to ensure content has started loading
+                setTimeout(function() {
+                    // Hide loader
+                    videoLoader.style.opacity = '0';
+                    // Show video
+                    videoPlayer.style.opacity = '1';
+                    
+                    // Remove loader after fade out
+                    setTimeout(function() {
+                        videoLoader.style.display = 'none';
+                    }, 500);
+                }, 1000); // Delay showing video by 1 second for smoother appearance
+            });
+            
+            // Backup in case load event doesn't fire properly
+            setTimeout(function() {
+                if (videoLoader.style.display !== 'none') {
+                    videoLoader.style.opacity = '0';
+                    videoPlayer.style.opacity = '1';
+                    
+                    setTimeout(function() {
+                        videoLoader.style.display = 'none';
+                    }, 500);
+                }
+            }, 5000); // 5 second fallback
+        });
+    </script>
+</body>
+</html>

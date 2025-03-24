@@ -351,6 +351,7 @@ body {
     transform: translate(-50%, -50%) scale(1);
     mix-blend-mode: color-dodge;
     animation: centralPulse 8s infinite alternate;
+    will-change: transform, opacity;
 }
 
 .formiche-dodge.visible {
